@@ -5,9 +5,10 @@ Breno Henrique
 -----------------------------------------------
 Desenha vigas e suas condições de apoio
 '''
-import turtle
+
 
 def apoio(sc,x,y,cri):
+  import turtle
   #Propriedades da tartaruga
   turtle.screensize(800,800)
   tar = turtle.Turtle()
@@ -117,3 +118,20 @@ def rotula():
   #Movimentacao da tartaruga
   tar.circle(r)
   tar.hideturtle()
+
+def inter(d):
+  #recebe um vetor das deslocabilidade de um nó e define sua condição
+  for item in d:
+    if item.get('d1') == 0 and item.get('d2') == 0:
+      #ponto engastado
+      item['status'] = "engaste"
+    elif item.get('d1') == 0 and item.get('d2') == 1:
+      #apoio de primeiro ou segundo genero
+      item['status'] = "segundo genero/primeiro genero" #perguntar ao usuario
+    elif item.get('d1') == 1 and item.get('d2') == 1:
+      #ponto interno
+      item['status'] = "ponto interno"
+  return d
+
+
+
