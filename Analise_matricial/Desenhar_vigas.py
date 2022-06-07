@@ -5,7 +5,8 @@ Breno Henrique
 -----------------------------------------------
 Desenha vigas e suas condições de apoio
 '''
-
+import pandas as pd
+import openpyxl
 
 def apoio(sc,x,y,cri):
   import turtle
@@ -13,6 +14,7 @@ def apoio(sc,x,y,cri):
   turtle.screensize(800,800)
   tar = turtle.Turtle()
   tar.pensize(1)
+  tar.hideturtle()
   tar.shape('turtle')
   tar.color('red')
   tar.penup()
@@ -20,10 +22,8 @@ def apoio(sc,x,y,cri):
   tar.pendown()
   #tar.pos(x,y) == passa a posição 
 
-
-  if "primeiro grau" == cri:
+  if cri in ["primeiro grau",'primeiro genero','movel']:
     #desenhando o triangulo
-    tar.hideturtle()
     tar.left(-60)
     tar.forward(100*sc)
     tar.left(-120)
@@ -39,9 +39,8 @@ def apoio(sc,x,y,cri):
     tar.pendown()
     tar.forward(150*sc)
     
-  elif "segundo grau" == cri:
+  elif cri in ["segundo grau","segundo genero","segundo"]:
     #desenhando o triangulo
-    tar.hideturtle()
     tar.left(-60)
     tar.forward(100*sc)
     tar.left(-120)
@@ -63,7 +62,7 @@ def apoio(sc,x,y,cri):
       tar.penup()
       tar.setpos(new_x+(dist/(2)**0.5)*i,y-0.5*100*sc*(3)**0.5)
 
-  elif 'engaste' == cri:
+  elif cri in ['engaste','engastado','fixo']:
     #Definindo o traco continuo vertical
     tar.left(90)
     tar.pendown()
@@ -88,21 +87,25 @@ def apoio(sc,x,y,cri):
       tar.penup()
       tar.setpos(x,y-50*sc+dist*i)
 
-def tramo(extensao):
+  elif 'livre' == cri:
+    pass
+    
+def tramo(extensao,x):
   import turtle
 
   #Propriedades da tartaruga
   turtle.screensize(800,800)
   tar = turtle.Turtle()
+  tar.hideturtle()
   tar.pensize(1)
   tar.shape('turtle')
   tar.color('red') 
+  tar.setpos(x,0)
 
   #Movimentacao da tartaruga
   tar.forward(extensao)
-  tar.hideturtle()
 
-def rotula():
+def rotula(x):
   import turtle
 
   #Propriedades da tartaruga
@@ -113,25 +116,26 @@ def rotula():
   tar.shape('turtle')
   tar.color('red') 
   tar.penup()
-  tar.setpos(100,-r)
+  tar.setpos(x,-r)
   tar.pendown()
   #Movimentacao da tartaruga
   tar.circle(r)
   tar.hideturtle()
 
-def inter(d):
-  #recebe um vetor das deslocabilidade de um nó e define sua condição
-  for item in d:
-    if item.get('d1') == 0 and item.get('d2') == 0:
-      #ponto engastado
-      item['status'] = "engaste"
-    elif item.get('d1') == 0 and item.get('d2') == 1:
-      #apoio de primeiro ou segundo genero
-      item['status'] = "segundo genero/primeiro genero" #perguntar ao usuario
-    elif item.get('d1') == 1 and item.get('d2') == 1:
-      #ponto interno
-      item['status'] = "ponto interno"
-  return d
 
-
+def elemento_estrutural(d):
+  x_global = 0
+  for i in range(list(d.shape)[0]+1):
+    if i == list(d.shape)[0]:
+      var = d.iloc[i-1]
+      n = var['no2']
+    else:
+      var = d.iloc[i]
+      n = var['no1']
+      tramo(var['Comprimento'],x_global)
+    if n == "rotula":
+      rotula(x_global)
+    else:
+      apoio(0.25,x_global,0,n)
+    x_global += var['Comprimento']
 
