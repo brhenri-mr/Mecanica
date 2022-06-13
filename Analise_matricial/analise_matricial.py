@@ -1,5 +1,18 @@
 import numpy as np
 
+def caso_carregado(bs,critrio):
+  """
+  bs = recebe uma base de dados com as combicoes
+  criterio = combinacao escolhida para a analise 
+  """
+  def combinacoes(funcao):
+    def esforcos_reais(*args,**kwargs):
+      cri = int(cri[-1])
+      caso = bs[cri-1]
+      return funcao()
+    return esforcos_reais
+  return combinacoes
+
 def rigidez_local(l, rigidez, par):
   # l = largura do vão do elemento
   #rigidez = produto entre E e 
@@ -70,7 +83,16 @@ def deslocamento(k, ford):
 	vec = np.dot(np.array(ford), np.linalg.inv(matriz))
 	return vec
 
-def vetor_local_forcas(carga,comprimento,tipo): 
+@caso_carregado()
+def vetor_local_forcas(carga,comprimento,tipo,grupo): 
+  """
+  Vetor dos carregamentos por engastamento perfeito no No. A funcao retorna o vetor local das forcas para o No
+  Carga = carregamento atuante no No
+  Comprimento = comprimento do tramo
+  Tipo = Natureza do carregamento geometrica: distribuido, pontual, triangular, momento
+    Distribuido = carregamento em um comprimento, necessario para dois valores [posicao inicial, posicao final]
+  Grupo = Natureza do carrregamento quanto a origem: peso proprio, sobrecarga
+  """
   if tipo == 'dist':
     v_um  = -carga*comprimento/2
     v_dois = v_um
@@ -150,6 +172,7 @@ def reacoes(k,forcas,des): #conferir
   return r
 
 
+
 #Rigidez local do elemento
 
 ri = 10000
@@ -182,6 +205,8 @@ vtord = ordenar_forcas(vetfglobal,d)
 #Reacoes de apoio
 r = reacoes(k_ord,vtord,d)
 print(r)
+
+
 
 
 
