@@ -9,7 +9,11 @@ def caso_carregado(bs,critrio):
     def esforcos_reais(*args,**kwargs):
       cri = int(cri[-1])
       caso = bs[cri-1]
-      return funcao()
+      for comb in bs: #abre a base de dados
+        for classe in comb: #abre a comb
+          if args[-1] == classe[0]:
+            args[0] == classe[1]*args[0]
+      return funcao(args)
     return esforcos_reais
   return combinacoes
 
